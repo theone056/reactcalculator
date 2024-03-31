@@ -19,65 +19,22 @@ function App() {
   const HandleNumberClick = (value) => {
     if(value === '<--')
     {
+      let latestVal = operObj.firstNumber.toString().slice(0,-1);
+      let val = latestVal.length === 0 ? 0 : latestVal;
+      setOperObj({
+        ...operObj,
+        firstNumber: val
+      });
 
-      // if(firstNum != null)
-      // {
-      //   setFirstNum((prev)=>{
-      //     if(prev != null)
-      //     {
-      //       let num = String(prev).slice(0,-1);
-      //       if(num === '')
-      //       {
-      //         return null;
-      //       }
-      //       else{
-      //         return Number(String(prev).slice(0,-1));
-      //       }
-      //     }
-      //   })
-
-      //   setFirstNumDisplay((prev)=>{
-      //     console.log(prev);
-      //     if(prev != null)
-      //     {
-      //       return String(prev).slice(0,-1) === '' ? null : String(prev).slice(0,-1);
-      //     }
-      //   });
-      // }
-      
+      setFirstNumDisplay(val);
     }
     else if(value === '.')
     {
-
-      // setFirstNum((prev)=>{
-      //   if(firstNum === null)
-      //   {
-      //     return 0 + '.';
-      //   }
-      //   else if(!prev.includes('.'))
-      //   {
-      //     return prev + '.';
-      //   }
-      //   else{
-      //     return prev;
-      //   }
-      // });
-
-      // setFirstNumDisplay((prev)=>{
-      //   if(firstNum === null)
-      //   {
-      //     return 0 + '.';
-      //   }
-      //   else if(!prev.includes('.'))
-      //   {
-      //     return prev + '.';
-      //   }
-      //   else{
-      //     return prev;
-      //   }
-      // });
-      // setOperator('');
-
+      if(!String(operObj.firstNumber).includes('.'))
+      {
+        setOperObj({...operObj, firstNumber: operObj.firstNumber + value})
+        setFirstNumDisplay(operObj.firstNumber + value)
+      }
     }
     else{
       operObj.firstNumber += value;
@@ -87,7 +44,6 @@ function App() {
     }
   }
   
-
   const HandleArithmeticClick = (value) => {
     switch(value){
       case '+':
@@ -98,11 +54,11 @@ function App() {
             operObj.secondNumber = operObj.firstNumber;
           }
           else{
-            operObj.secondNumber = Calculate(operObj.secondNumber,operObj.firstNumber);
+            operObj.secondNumber = Calculate(Number(operObj.secondNumber),Number(operObj.firstNumber));
           }
         }
-        setOperObj({...operObj,operator: value, secondNumber: operObj.secondNumber, firstNumber: 0 });
-        setSecondNumDisplay(`${operObj.secondNumber} ${value}`);
+        setOperObj({...operObj,operator: value, secondNumber: Number(operObj.secondNumber), firstNumber: 0 });
+        setSecondNumDisplay(`${Number(operObj.secondNumber)} ${value}`);
         setFirstNumDisplay(operObj.secondNumber);
         break;
       case '-':
@@ -113,12 +69,12 @@ function App() {
             operObj.secondNumber = operObj.firstNumber;
           }
           else{
-            operObj.secondNumber = Calculate(operObj.secondNumber,operObj.firstNumber);
+            operObj.secondNumber = Calculate(Number(operObj.secondNumber),Number(operObj.firstNumber));
           }
         }
-        setOperObj({...operObj,operator: value, secondNumber: operObj.secondNumber, firstNumber: 0 });
-        setSecondNumDisplay(`${operObj.secondNumber} ${value}`);
-        setFirstNumDisplay(operObj.secondNumber);
+        setOperObj({...operObj,operator: value, secondNumber: Number(operObj.secondNumber), firstNumber: 0 });
+        setSecondNumDisplay(`${Number(operObj.secondNumber)} ${value}`);
+        setFirstNumDisplay(Number(operObj.secondNumber));
         break;
       case 'x':
         if(operObj.firstNumber !== 0)
@@ -128,12 +84,12 @@ function App() {
             operObj.secondNumber = operObj.firstNumber;
           }
           else{
-            operObj.secondNumber = Calculate(operObj.secondNumber,operObj.firstNumber);
+            operObj.secondNumber = Calculate(Number(operObj.secondNumber),Number(operObj.firstNumber));
           }
         }
-        setOperObj({...operObj,operator: value, secondNumber: operObj.secondNumber, firstNumber: 0 });
-        setSecondNumDisplay(`${operObj.secondNumber} ${value}`);
-        setFirstNumDisplay(operObj.secondNumber);
+        setOperObj({...operObj,operator: value, secondNumber: Number(operObj.secondNumber), firstNumber: 0 });
+        setSecondNumDisplay(`${Number(operObj.secondNumber)} ${value}`);
+        setFirstNumDisplay(Number(operObj.secondNumber));
         break;
       case '÷':
         if(operObj.firstNumber !== 0)
@@ -143,17 +99,17 @@ function App() {
             operObj.secondNumber = operObj.firstNumber;
           }
           else{
-            operObj.secondNumber = Calculate(operObj.secondNumber,operObj.firstNumber);
+            operObj.secondNumber = Calculate(Number(operObj.secondNumber),Number(operObj.firstNumber));
           }
         }
-        setOperObj({...operObj,operator: value, secondNumber: operObj.secondNumber, firstNumber: 0 });
-        setSecondNumDisplay(`${operObj.secondNumber} ${value}`);
-        setFirstNumDisplay(operObj.secondNumber);
+        setOperObj({...operObj,operator: value, secondNumber: Number(operObj.secondNumber), firstNumber: 0 });
+        setSecondNumDisplay(`${Number(operObj.secondNumber)} ${value}`);
+        setFirstNumDisplay(Number(operObj.secondNumber));
         break;
       case '=':
-        setOperObj({...operObj, secondNumber: Calculate(operObj.secondNumber, Number(firstNumDisplay)), firstNumber: 0 });
-        setSecondNumDisplay(`${operObj.secondNumber} ${operObj.operator} ${Number(firstNumDisplay)} = `);
-        setFirstNumDisplay(Calculate(operObj.secondNumber, Number(firstNumDisplay)));
+        setOperObj({...operObj, secondNumber: Calculate(Number(operObj.secondNumber), Number(firstNumDisplay)), firstNumber: 0 });
+        setSecondNumDisplay(`${Number(operObj.secondNumber)} ${operObj.operator} ${Number(firstNumDisplay)} = `);
+        setFirstNumDisplay(Calculate(Number(operObj.secondNumber), Number(firstNumDisplay)));
         break;
       default:
     }
@@ -182,7 +138,9 @@ function App() {
   }
   
   const clear = () => {
-
+    setFirstNumDisplay(0);
+    setSecondNumDisplay(0);
+    setOperObj({operator:'', firstNumber:0, secondNumber:0});
   }
 
   const HandleOtherOperators = (value) => {
@@ -191,42 +149,17 @@ function App() {
         clear();
         break;
       case '+/-':{
-        // setFirstNum((prev)=>{
-        //   return prev * -1;
-        // });
-        // setFirstNumDisplay((prev)=>{
-        //   return prev * -1;
-        // });
-
-        // setSecondNumDisplay((prev)=> {
-        //   if(prev !== null)
-        //   {
-        //     return prev + 'negate('+Number(firstNumDisplay) + ')'
-        //   }
-        //   else{
-        //     return 'negate('+Number(firstNumDisplay) + ')'
-        //   }
-        // });
+        setOperObj({...operObj, firstNumber: operObj.firstNumber *-1})
+        setFirstNumDisplay(operObj.firstNumber*-1)
         break;
       }
       case '%':{
-        // if(secondNum !== null)
-        // {
-        //   setFirstNum(Number((firstNumDisplay/100)*secondNum));
-        //   setFirstNumDisplay(Number((firstNumDisplay/100)*secondNum));
-        //   setSecondNumDisplay((prev)=>{
-        //     if(prev !== null)
-        //     {
-        //       return secondNum + ' ' + displayOperator+' '+ Number((firstNumDisplay/100)*secondNum)
-        //     }
-        //     else{
-        //       return Number((firstNumDisplay/100)*secondNum)
-        //     }
-        //   });
-        // }
-        // else{
-        //   clear();
-        // }
+        setOperObj({
+          ...operObj,
+          firstNumber: Number((operObj.firstNumber/100)*operObj.secondNumber)
+        });
+        setFirstNumDisplay(Number((operObj.firstNumber/100)*operObj.secondNumber));
+        setSecondNumDisplay(`${operObj.secondNumber} ${operObj.operator} ${Number((operObj.firstNumber/100)*operObj.secondNumber)}`)
         break;
       }
       default:
@@ -237,11 +170,9 @@ function App() {
     <div className="App">
       <div className='prevValues'>
           <span>{secondNumDisplay}</span>
-          {/* <span>{secondNumDisplay !== null ? secondNumDisplay  : ''}</span> */}
       </div>
       <div className='latestValues'>
           <span>{firstNumDisplay}</span>
-          {/* <span>{firstNumDisplay == null? 0 : firstNumDisplay }</span> */}
       </div>
       <div className='buttonContainer'>
         <div className='numbers-container'>
