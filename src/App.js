@@ -6,241 +6,173 @@ function App() {
   const otherOperators = ["AC", "+/-", "%", ];
   const numbers = ["<--",".","0","1","2","3","4","5","6","7","8","9"];
   const arithmetic = ["÷","x","-","+","="];
-  const [firstNum, setFirstNum] = useState(null);
-  const [secondNum, setSecondNum] = useState(null);
-  const [operator, setOperator] = useState('');
-  const [displayOperator, setDisplayOperator] = useState('');
-  const [firstNumDisplay, setFirstNumDisplay] = useState(null);
-  const [secondNumDisplay, setSecondNumDisplay] = useState(null);
-
+  const [firstNumDisplay, setFirstNumDisplay] = useState(0);
+  const [secondNumDisplay, setSecondNumDisplay] = useState(0);
+  
+  const [operObj, setOperObj] = useState({
+    operator: '',
+    firstNumber: 0,
+    secondNumber: 0
+  });
 
   
   const HandleNumberClick = (value) => {
     if(value === '<--')
     {
-      if(firstNum != null)
-      {
-        setFirstNum((prev)=>{
-          if(prev != null)
-          {
-            let num = String(prev).slice(0,-1);
-            if(num === '')
-            {
-              return null;
-            }
-            else{
-              return Number(String(prev).slice(0,-1));
-            }
-          }
-        })
 
-        setFirstNumDisplay((prev)=>{
-          console.log(prev);
-          if(prev != null)
-          {
-            return String(prev).slice(0,-1) === '' ? null : String(prev).slice(0,-1);
-          }
-        });
-      }
+      // if(firstNum != null)
+      // {
+      //   setFirstNum((prev)=>{
+      //     if(prev != null)
+      //     {
+      //       let num = String(prev).slice(0,-1);
+      //       if(num === '')
+      //       {
+      //         return null;
+      //       }
+      //       else{
+      //         return Number(String(prev).slice(0,-1));
+      //       }
+      //     }
+      //   })
+
+      //   setFirstNumDisplay((prev)=>{
+      //     console.log(prev);
+      //     if(prev != null)
+      //     {
+      //       return String(prev).slice(0,-1) === '' ? null : String(prev).slice(0,-1);
+      //     }
+      //   });
+      // }
+      
     }
     else if(value === '.')
     {
-      setFirstNum((prev)=>{
-        if(firstNum === null)
-        {
-          return 0 + '.';
-        }
-        else if(!prev.includes('.'))
-        {
-          return prev + '.';
-        }
-        else{
-          return prev;
-        }
-      });
 
-      setFirstNumDisplay((prev)=>{
-        if(firstNum === null)
-        {
-          return 0 + '.';
-        }
-        else if(!prev.includes('.'))
-        {
-          return prev + '.';
-        }
-        else{
-          return prev;
-        }
-      });
-      setOperator('');
+      // setFirstNum((prev)=>{
+      //   if(firstNum === null)
+      //   {
+      //     return 0 + '.';
+      //   }
+      //   else if(!prev.includes('.'))
+      //   {
+      //     return prev + '.';
+      //   }
+      //   else{
+      //     return prev;
+      //   }
+      // });
+
+      // setFirstNumDisplay((prev)=>{
+      //   if(firstNum === null)
+      //   {
+      //     return 0 + '.';
+      //   }
+      //   else if(!prev.includes('.'))
+      //   {
+      //     return prev + '.';
+      //   }
+      //   else{
+      //     return prev;
+      //   }
+      // });
+      // setOperator('');
+
     }
     else{
-      setFirstNum((prev)=>{ 
-        if(prev != null && operator === '' && (prev !== 0 || value !== 0))
-        {
-          return prev + value;
-        }
-        else{
-          setOperator('');
-          return value;
-        }
-      });
-
-      setFirstNumDisplay((prev)=>{
-        if(prev != null && operator === '' && (prev !== 0 || value !== 0))
-        {
-          return prev + value;
-        }
-        else{
-          setOperator('');
-          return value;
-        }
-      });
+      operObj.firstNumber += value;
+      operObj.firstNumber = Number(operObj.firstNumber);
+      setOperObj({...operObj, firstNumber: Number(operObj.firstNumber) })
+      setFirstNumDisplay(operObj.firstNumber);
     }
   }
-
-  useEffect(()=>{
-    setFirstNumDisplay(secondNum);
-    if(secondNum != null)
-    {
-      setSecondNumDisplay(secondNum + ' ' + displayOperator);
-    }
-  },[secondNum]);
-
-  useEffect(()=>{
-    if(secondNum != null && operator !== '=')
-    {
-      setSecondNumDisplay((prev)=>{
-        return prev.slice(0,-1) + displayOperator;
-      })
-    }
-  },[operator])
   
 
   const HandleArithmeticClick = (value) => {
     switch(value){
       case '+':
-        setSecondNum((prev)=>{
-          if(prev == null || operator === '=')
+        if(operObj.firstNumber !== 0)
+        {
+          if(operObj.secondNumber === 0)
           {
-            return Number(firstNum);
-          }
-          else if(firstNum == null)
-          {
-            return prev;
+            operObj.secondNumber = operObj.firstNumber;
           }
           else{
-            return Calculate(prev,firstNum);
+            operObj.secondNumber = Calculate(operObj.secondNumber,operObj.firstNumber);
           }
-        });
-        
-        setOperator('+');
-        setDisplayOperator('+');
-        setFirstNum(null);
+        }
+        setOperObj({...operObj,operator: value, secondNumber: operObj.secondNumber, firstNumber: 0 });
+        setSecondNumDisplay(`${operObj.secondNumber} ${value}`);
+        setFirstNumDisplay(operObj.secondNumber);
         break;
       case '-':
-        setSecondNum((prev)=>{
-          if(prev == null || operator === '=')
+        if(operObj.firstNumber !== 0)
+        {
+          if(operObj.secondNumber === 0)
           {
-            return Number(firstNum);
-          }
-          else if(firstNum == null)
-          {
-            return prev;
+            operObj.secondNumber = operObj.firstNumber;
           }
           else{
-            return Calculate(prev,Number(firstNum));
+            operObj.secondNumber = Calculate(operObj.secondNumber,operObj.firstNumber);
           }
-        });
-        setOperator('-');
-        setDisplayOperator('-');
-        setFirstNum(null);
+        }
+        setOperObj({...operObj,operator: value, secondNumber: operObj.secondNumber, firstNumber: 0 });
+        setSecondNumDisplay(`${operObj.secondNumber} ${value}`);
+        setFirstNumDisplay(operObj.secondNumber);
         break;
       case 'x':
-        setSecondNum((prev)=>{
-          if(prev == null || operator === '=')
+        if(operObj.firstNumber !== 0)
+        {
+          if(operObj.secondNumber === 0)
           {
-            return Number(firstNum);
-          }
-          else if(firstNum == null)
-          {
-            return prev;
+            operObj.secondNumber = operObj.firstNumber;
           }
           else{
-            return Calculate(prev,Number(firstNum));
+            operObj.secondNumber = Calculate(operObj.secondNumber,operObj.firstNumber);
           }
-        });
-        setOperator('x');
-        setDisplayOperator('x');
-        setFirstNum(null);
+        }
+        setOperObj({...operObj,operator: value, secondNumber: operObj.secondNumber, firstNumber: 0 });
+        setSecondNumDisplay(`${operObj.secondNumber} ${value}`);
+        setFirstNumDisplay(operObj.secondNumber);
         break;
       case '÷':
-        setSecondNum((prev)=>{
-          if(prev == null || operator === '=')
+        if(operObj.firstNumber !== 0)
+        {
+          if(operObj.secondNumber === 0)
           {
-            return Number(firstNum);
-          }
-          else if(firstNum == null)
-          {
-            return prev;
+            operObj.secondNumber = operObj.firstNumber;
           }
           else{
-            return Calculate(prev,Number(firstNum));
+            operObj.secondNumber = Calculate(operObj.secondNumber,operObj.firstNumber);
           }
-        });
-        setOperator('÷');
-        setDisplayOperator('÷');
-        setFirstNum(null);
+        }
+        setOperObj({...operObj,operator: value, secondNumber: operObj.secondNumber, firstNumber: 0 });
+        setSecondNumDisplay(`${operObj.secondNumber} ${value}`);
+        setFirstNumDisplay(operObj.secondNumber);
         break;
       case '=':
-        setFirstNum(()=>{
-          if(firstNum == null)
-          {
-            return Calculate(secondNum,firstNumDisplay);
-          }
-          else{
-            return Calculate(secondNum,firstNumDisplay);
-          }
-          }
-        );
-        setFirstNumDisplay(()=>{
-          if(firstNum == null)
-          {
-            return Calculate(secondNum,firstNumDisplay);
-          }
-          else{
-            return Calculate(secondNum,firstNumDisplay);
-          }
-        }
-        );
-        setOperator('=');
-        if(secondNum != null)
-        {
-          setSecondNumDisplay(Number(secondNum) + ' ' + displayOperator + ' ' + Number(firstNumDisplay) + ' = ');
-        }
-        else{
-          setSecondNumDisplay(Number(firstNumDisplay) + ' = ');
-        }
-        
+        setOperObj({...operObj, secondNumber: Calculate(operObj.secondNumber, Number(firstNumDisplay)), firstNumber: 0 });
+        setSecondNumDisplay(`${operObj.secondNumber} ${operObj.operator} ${Number(firstNumDisplay)} = `);
+        setFirstNumDisplay(Calculate(operObj.secondNumber, Number(firstNumDisplay)));
         break;
       default:
     }
   }
 
   const Calculate = (firstVal,secondVal) => {
-    if(displayOperator === '+')
+    if(operObj.operator === '+')
     {
       return (Number(firstVal) + Number(secondVal));
     }
-    else if(displayOperator === '-')
+    else if(operObj.operator  === '-')
     {
       return (Number(firstVal) - Number(secondVal));
     }
-    else if(displayOperator === '÷')
+    else if(operObj.operator  === '÷')
     {
       return (Number(firstVal) / Number(secondVal));
     }
-    else if(displayOperator === 'x')
+    else if(operObj.operator  === 'x')
     {
       return (Number(firstVal) * Number(secondVal));
     }
@@ -250,12 +182,7 @@ function App() {
   }
   
   const clear = () => {
-    setFirstNum(null);
-    setFirstNumDisplay(null);
-    setSecondNum(null);
-    setOperator('');
-    setDisplayOperator('');
-    setSecondNumDisplay(null);
+
   }
 
   const HandleOtherOperators = (value) => {
@@ -264,42 +191,42 @@ function App() {
         clear();
         break;
       case '+/-':{
-        setFirstNum((prev)=>{
-          return prev * -1;
-        });
-        setFirstNumDisplay((prev)=>{
-          return prev * -1;
-        });
+        // setFirstNum((prev)=>{
+        //   return prev * -1;
+        // });
+        // setFirstNumDisplay((prev)=>{
+        //   return prev * -1;
+        // });
 
-        setSecondNumDisplay((prev)=> {
-          if(prev !== null)
-          {
-            return prev + 'negate('+Number(firstNumDisplay) + ')'
-          }
-          else{
-            return 'negate('+Number(firstNumDisplay) + ')'
-          }
-        });
+        // setSecondNumDisplay((prev)=> {
+        //   if(prev !== null)
+        //   {
+        //     return prev + 'negate('+Number(firstNumDisplay) + ')'
+        //   }
+        //   else{
+        //     return 'negate('+Number(firstNumDisplay) + ')'
+        //   }
+        // });
         break;
       }
       case '%':{
-        if(secondNum !== null)
-        {
-          setFirstNum(Number((firstNumDisplay/100)*secondNum));
-          setFirstNumDisplay(Number((firstNumDisplay/100)*secondNum));
-          setSecondNumDisplay((prev)=>{
-            if(prev !== null)
-            {
-              return secondNum + ' ' + displayOperator+' '+ Number((firstNumDisplay/100)*secondNum)
-            }
-            else{
-              return Number((firstNumDisplay/100)*secondNum)
-            }
-          });
-        }
-        else{
-          clear();
-        }
+        // if(secondNum !== null)
+        // {
+        //   setFirstNum(Number((firstNumDisplay/100)*secondNum));
+        //   setFirstNumDisplay(Number((firstNumDisplay/100)*secondNum));
+        //   setSecondNumDisplay((prev)=>{
+        //     if(prev !== null)
+        //     {
+        //       return secondNum + ' ' + displayOperator+' '+ Number((firstNumDisplay/100)*secondNum)
+        //     }
+        //     else{
+        //       return Number((firstNumDisplay/100)*secondNum)
+        //     }
+        //   });
+        // }
+        // else{
+        //   clear();
+        // }
         break;
       }
       default:
@@ -309,10 +236,12 @@ function App() {
   return (
     <div className="App">
       <div className='prevValues'>
-          <span>{secondNumDisplay !== null ? secondNumDisplay  : ''}</span>
+          <span>{secondNumDisplay}</span>
+          {/* <span>{secondNumDisplay !== null ? secondNumDisplay  : ''}</span> */}
       </div>
       <div className='latestValues'>
-          <span>{firstNumDisplay==null? 0 : firstNumDisplay}</span>
+          <span>{firstNumDisplay}</span>
+          {/* <span>{firstNumDisplay == null? 0 : firstNumDisplay }</span> */}
       </div>
       <div className='buttonContainer'>
         <div className='numbers-container'>
